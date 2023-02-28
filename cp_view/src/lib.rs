@@ -17,19 +17,15 @@ pub struct AppState {
     log_info: Arc<Vec<String>>,
 }
 
-// impl AppState {
-//     fn new() -> Self {
-//         let string = "this is source text".to_string();
-//         let init_number = 1;
-//         let log_info = Arc::new(Mutex::new(vec!["a".to_string(), "b".to_string()]));
-//
-//         Self {
-//             source_text: string,
-//             line_number: init_number,
-//             log_info: log_info,
-//         }
-//     }
-// }
+impl AppState {
+    fn new() -> Self {
+        Self {
+            source_text: format!("this is source_text"),
+            line_number: 1,
+            log_info: Arc::new(Vec::new()),
+        }
+    }
+}
 
 mod edit_panel;
 mod header;
@@ -42,11 +38,7 @@ pub fn show() {
         .title(format!("My Complier"));
 
     AppLauncher::with_window(main_window)
-        .launch(AppState {
-            source_text: format!("d"),
-            line_number: 1,
-            log_info: Arc::new(Vec::new()),
-        })
+        .launch(AppState::new())
         .expect("Launch Window Error!");
 }
 
