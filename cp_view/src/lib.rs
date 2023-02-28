@@ -30,7 +30,7 @@ pub fn show() {
     AppLauncher::with_window(main_window)
         .launch(AppState {
             source_text: format!("d"),
-            line_number: 0,
+            line_number: 1,
             log_info: Arc::new(vec!["a".to_string(), "b".to_string()]),
         })
         .expect("Launch Window Error!");

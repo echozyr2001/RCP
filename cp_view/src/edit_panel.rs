@@ -24,12 +24,24 @@ impl<W: Widget<AppState>> Controller<AppState, W> for MyController {
         env: &druid::Env,
     ) {
         match event {
+            // Event::ImeStateChange => {
+            // } // Event::KeyDown(key_event) => {
+            //     if key_event.code == Code::Enter || key_event.code == Code::Backspace {
+            //     }
+            // }
             Event::KeyDown(key_event) => {
-                if key_event.code == Code::Enter {
+                if key_event.code == Code::Enter || key_event.code == Code::Backspace {
                     let line_number = data.source_text.split('\n').count();
                     data.line_number = line_number;
+                    child.event(ctx, event, data, env);
                 }
-                child.event(ctx, event, data, env);
+            }
+            Event::KeyUp(key_event) => {
+                if key_event.code == Code::Enter || key_event.code == Code::Backspace {
+                    let line_number = data.source_text.split('\n').count();
+                    data.line_number = line_number;
+                    child.event(ctx, event, data, env);
+                }
             }
             _ => {
                 child.event(ctx, event, data, env);
