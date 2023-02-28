@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 druid = "0.8.2"
+opener = "0.5.2"
