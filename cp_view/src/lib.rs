@@ -17,6 +17,20 @@ pub struct AppState {
     log_info: Arc<Vec<String>>,
 }
 
+// impl AppState {
+//     fn new() -> Self {
+//         let string = "this is source text".to_string();
+//         let init_number = 1;
+//         let log_info = Arc::new(Mutex::new(vec!["a".to_string(), "b".to_string()]));
+//
+//         Self {
+//             source_text: string,
+//             line_number: init_number,
+//             log_info: log_info,
+//         }
+//     }
+// }
+
 mod edit_panel;
 mod header;
 mod info_panel;
@@ -31,7 +45,7 @@ pub fn show() {
         .launch(AppState {
             source_text: format!("d"),
             line_number: 1,
-            log_info: Arc::new(vec!["a".to_string(), "b".to_string()]),
+            log_info: Arc::new(Vec::new()),
         })
         .expect("Launch Window Error!");
 }
