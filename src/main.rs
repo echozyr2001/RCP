@@ -1,3 +1,5 @@
+use cp_view::*;
+
 fn main() {
-    println!("Hello, world!");
+    show();
 }

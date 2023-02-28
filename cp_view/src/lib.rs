@@ -1,14 +1,15 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+use druid::{widget::Label, AppLauncher, Widget, WindowDesc};
+
+// struct State;
+
+pub fn show() {
+    let main_window = WindowDesc::new(ui_builder()).title(format!("My Complier"));
+
+    AppLauncher::with_window(main_window)
+        .launch(())
+        .expect("Launch Window Error!");
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+fn ui_builder() -> impl Widget<()> {
+    Label::new(format!("you did it!"))
 }
