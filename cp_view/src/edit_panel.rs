@@ -38,6 +38,12 @@ impl<W: Widget<AppState>> Controller<AppState, W> for MyController {
                     child.event(ctx, event, data, env);
                 }
             }
+            // TODO: When open file then line_number will not change
+            // Event::ImeStateChange => {
+            //     let line_number = data.source_text.split('\n').count();
+            //     data.line_number = line_number;
+            //     child.event(ctx, event, data, env);
+            // }
             _ => {
                 child.event(ctx, event, data, env);
             }
