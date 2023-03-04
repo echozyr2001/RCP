@@ -15,7 +15,7 @@ pub fn build() -> impl Widget<AppState> {
         1.0,
         Flex::row()
             .with_child(
-                Button::new("button1").on_click(|_, data: &mut AppState, _| {
+                Button::new("词法分析").on_click(|_, data: &mut AppState, _| {
                     // let mut log_info = self::AppState::log_info;
                     // let mut a = Vec::<String>::new();
                     // a.push("s".to_string());
@@ -37,7 +37,11 @@ pub fn build() -> impl Widget<AppState> {
                     },
                 ),
             )
-            .with_child(Button::new("button2"))
+            .with_child(
+                Button::new("button2").on_click(|_, data: &mut AppState, _| {
+                    println!("line number is {}", cp_core::count_line(&data.source_text));
+                }),
+            )
             .with_child(Button::new("button3"))
             .with_child(Button::new("button4"))
             .with_child(Button::new("button5")),

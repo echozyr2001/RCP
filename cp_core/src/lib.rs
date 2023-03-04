@@ -1,14 +1,49 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+pub mod lexical_analyzer;
+
+#[warn(dead_code)]
+
+struct Category {
+    keywords: KeyWords,
+    delimiter: Delimiter,
+    litter: Litter,
+    character: usize,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+enum KeyWords {
+    CHAR,
+    INT,
+    FLOAT,
+    BREAK,
+    CONST,
+    RETURN,
+    VOID,
+    CONTINUE,
+    DO,
+    WHILE,
+    IF,
+    ELSE,
+    FOR,
+}
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+enum Delimiter {
+    LEFTCURLYBRACKET,
+    RIGHTCURLYBRACKET,
+    SEMICOLON,
+    COMMA,
+}
+
+enum Litter {
+    INTEGER,
+    CHARACTER,
+    STRING,
+    INEDNTIFIER,
+    FLOAT,
+}
+
+// enum Operator {
+//
+// }
+
+pub fn count_line(text: &String) -> usize {
+    text.split('\n').count()
 }

@@ -6,5 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+cp_core = {path = "../cp_core"}
 druid = "0.8.2"
 opener = "0.5.2"
