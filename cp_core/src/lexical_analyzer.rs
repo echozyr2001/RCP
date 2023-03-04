@@ -1,22 +1,24 @@
+use crate::Category;
+
 pub struct Token {
     row: usize,
     column: usize,
-    category: usize,
+    category: Category,
     value: String,
 }
 
-impl std::fmt::Display for Token {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "row: {}, column: {}, category: {}, value: {}",
-            self.row, self.column, self.category, self.value
-        )
-    }
-}
+// impl std::fmt::Display for Token {
+//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         write!(
+//             f,
+//             "row: {}, column: {}, category: {}, value: {}",
+//             self.row, self.column, self.category, self.value
+//         )
+//     }
+// }
 
 impl Token {
-    fn new(row: usize, column: usize, category: usize, value: String) -> Self {
+    fn new(row: usize, column: usize, category: Category, value: String) -> Self {
         Self {
             row,
             column,
@@ -38,7 +40,7 @@ pub fn analyze(text: &String) -> Vec<Token> {
 fn generate_token(row: &usize, line: &str) -> () {
     let bytes = line.as_bytes();
     let mut column = 0;
-    while column < line.len() - 1 {
+    while column < line.len() {
         let ch = bytes[column] as char;
 
         if ch == '_' || ch.is_ascii_alphabetic() {
@@ -46,7 +48,15 @@ fn generate_token(row: &usize, line: &str) -> () {
             ()
         } else if ch == '\'' {
             // TODO:识别字符
-            recognize_character(row, &mut column, bytes);
+            let token = recognize_character(row, &mut column, bytes);
+            match token {
+                Ok(token) => {
+                    println!("{}", token.value);
+                }
+                Err(token) => {
+                    println!("err: {}", token.value);
+                }
+            }
             ()
         } else if ch == '\"' {
             // TODO:识别字符串
@@ -63,20 +73,24 @@ fn generate_token(row: &usize, line: &str) -> () {
     }
 }
 
-fn recognize_character(row: &usize, column: &mut usize, bytes: &[u8]) -> () {
+fn recognize_character(row: &usize, column: &mut usize, bytes: &[u8]) -> Result<Token, Token> {
     let mut result = "".to_string();
     let mut status = 0;
-    let mut ch = bytes[*column] as char;
+    let ch = bytes[*column] as char;
     result.push(ch);
+
     while status != 2 {
         *column += 1;
-        ch = bytes[*column] as char;
+        let ch = bytes[*column] as char;
         match status {
             0 => {
                 if ch == '\'' {
-                    // TODO:set error
-                    println!("err1");
-                    return;
+                    return Err(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        Category::Character,
+                        result,
+                    ));
                 } else if ch == '\\' {
                     status = 3;
                 } else {
@@ -87,9 +101,13 @@ fn recognize_character(row: &usize, column: &mut usize, bytes: &[u8]) -> () {
                 if ch == '\'' {
                     status = 2;
                 } else {
-                    // TODO:set error
-                    println!("err2");
-                    return;
+                    // return set_error(ch, row, column);
+                    return Err(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        Category::Character,
+                        result,
+                    ));
                 }
             }
             2 => {}
@@ -97,26 +115,38 @@ fn recognize_character(row: &usize, column: &mut usize, bytes: &[u8]) -> () {
                 if ch == 't' || ch == 'n' || ch == 'r' || ch == '\"' || ch == '\'' {
                     status = 4;
                 } else {
-                    // TODO:set error
-                    println!("err3");
-                    return;
+                    // return set_error(ch, row, column);
+                    return Err(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        Category::Character,
+                        result,
+                    ));
                 }
             }
             4 => {
                 if ch == '\'' {
                     status = 2;
                 } else {
-                    // TODO:set error
-                    println!("err4");
-                    return;
+                    // return set_error(ch, row, column);
+                    return Err(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        Category::Character,
+                        result,
+                    ));
                 }
             }
             _ => {}
         }
         result.push(ch);
     }
-    println!("result is {} !!!!!!!!", result);
-    ()
+    Ok(Token::new(
+        row.clone(),
+        column.clone(),
+        Category::Character,
+        result,
+    ))
 }
 
 fn recognize_digit(row: &usize, column: &usize, bytes: &[u8]) {

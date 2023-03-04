@@ -2,11 +2,11 @@ pub mod lexical_analyzer;
 
 #[warn(dead_code)]
 
-struct Category {
-    keywords: KeyWords,
-    delimiter: Delimiter,
-    litter: Litter,
-    character: usize,
+enum Category {
+    KeyWords,
+    Delimiter,
+    Litter,
+    Character,
 }
 
 enum KeyWords {
