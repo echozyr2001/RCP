@@ -1,7 +1,7 @@
 pub mod lexical_analyzer;
 
 #[warn(dead_code)]
-
+#[derive(Debug, Clone, Copy)]
 enum Category {
     KeyWords,
     Delimiter,

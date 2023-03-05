@@ -7,16 +7,6 @@ pub struct Token {
     value: String,
 }
 
-// impl std::fmt::Display for Token {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         write!(
-//             f,
-//             "row: {}, column: {}, category: {}, value: {}",
-//             self.row, self.column, self.category, self.value
-//         )
-//     }
-// }
-
 impl Token {
     fn new(row: usize, column: usize, category: Category, value: String) -> Self {
         Self {
@@ -28,69 +18,86 @@ impl Token {
     }
 }
 
-pub fn analyze(text: &String) -> Vec<Token> {
-    let lines = text.lines();
-    let row = 1;
-    for line in lines {
-        generate_token(&row, line);
-    }
+pub fn analyze(source_code: &str) -> Vec<Token> {
+    generate_tokens(source_code);
     Vec::new()
 }
 
-fn generate_token(row: &usize, line: &str) -> () {
-    let bytes = line.as_bytes();
-    let mut column = 0;
-    while column < line.len() {
-        let ch = bytes[column] as char;
+fn generate_tokens(source_code: &str) -> (Vec<Token>, Vec<Token>) {
+    let mut tokens: Vec<Token> = Vec::new();
+    let mut logs: Vec<Token> = Vec::new();
+    for (row, line) in source_code.lines().enumerate() {
+        let mut column = 0;
 
-        if ch == '_' || ch.is_ascii_alphabetic() {
-            // TODO:识别标识符
-            ()
-        } else if ch == '\'' {
-            // TODO:识别字符
-            let token = recognize_character(row, &mut column, bytes);
-            match token {
-                Ok(token) => {
-                    println!("{}", token.value);
+        while column < line.len() {
+            let ch = line.chars().nth(column).unwrap();
+            if ch == '_' || ch.is_ascii_alphabetic() {
+                // TODO:识别标识符
+            } else if ch == '\'' {
+                // TODO:识别字符
+                let (end, token) = recognize_character(&row, &column, &line[column + 1..]);
+                column += end + 1;
+                match token {
+                    Some(token) => match token {
+                        Ok(token) => {
+                            println!("{}", token.value);
+                            tokens.push(token);
+                        }
+                        Err(token) => {
+                            println!("err {}", token.value);
+                            logs.push(token);
+                        }
+                    },
+                    None => {
+                        println!("none!!!!");
+                    }
                 }
-                Err(token) => {
-                    println!("err: {}", token.value);
-                }
+            } else if ch == '\"' {
+                // TODO:识别字符串
+            } else if ch.is_ascii_digit() {
+                // TODO:识别数字
+            } else {
+                // TODO:识别其他
             }
-            ()
-        } else if ch == '\"' {
-            // TODO:识别字符串
-            ()
-        } else if ch.is_ascii_digit() {
-            // TODO:识别数字
-            ()
-        } else {
-            // TODO:识别其他
-            ()
+            column += 1;
         }
-
-        column += 1;
     }
+    (tokens, logs)
 }
 
-fn recognize_character(row: &usize, column: &mut usize, bytes: &[u8]) -> Result<Token, Token> {
-    let mut result = "".to_string();
-    let mut status = 0;
-    let ch = bytes[*column] as char;
-    result.push(ch);
+fn recognize_character(
+    row: &usize,
+    column: &usize,
+    line: &str,
+) -> (usize, Option<Result<Token, Token>>) {
+    fn set_ok(row: usize, column: usize, value: String) -> Result<Token, Token> {
+        Ok(Token::new(
+            row.clone(),
+            column.clone(),
+            Category::Character,
+            value,
+        ))
+    }
 
-    while status != 2 {
-        *column += 1;
-        let ch = bytes[*column] as char;
+    fn set_err(row: usize, column: usize, value: String) -> Result<Token, Token> {
+        Err(Token::new(
+            row.clone(),
+            column.clone(),
+            Category::Character,
+            value,
+        ))
+    }
+    let mut end = 0;
+    let mut status = 0;
+    let mut value = String::from("\'");
+
+    for (index, ch) in line.chars().enumerate() {
+        value.push(ch);
         match status {
             0 => {
                 if ch == '\'' {
-                    return Err(Token::new(
-                        row.clone(),
-                        column.clone(),
-                        Category::Character,
-                        result,
-                    ));
+                    // err
+                    break;
                 } else if ch == '\\' {
                     status = 3;
                 } else {
@@ -101,61 +108,53 @@ fn recognize_character(row: &usize, column: &mut usize, bytes: &[u8]) -> Result<
                 if ch == '\'' {
                     status = 2;
                 } else {
-                    // return set_error(ch, row, column);
-                    return Err(Token::new(
-                        row.clone(),
-                        column.clone(),
-                        Category::Character,
-                        result,
-                    ));
+                    // err
+                    break;
                 }
             }
-            2 => {}
+            2 => {
+                break;
+            }
             3 => {
                 if ch == 't' || ch == 'n' || ch == 'r' || ch == '\"' || ch == '\'' {
                     status = 4;
                 } else {
-                    // return set_error(ch, row, column);
-                    return Err(Token::new(
-                        row.clone(),
-                        column.clone(),
-                        Category::Character,
-                        result,
-                    ));
+                    // err
+                    break;
                 }
             }
             4 => {
                 if ch == '\'' {
                     status = 2;
                 } else {
-                    // return set_error(ch, row, column);
-                    return Err(Token::new(
-                        row.clone(),
-                        column.clone(),
-                        Category::Character,
-                        result,
-                    ));
+                    // err
+                    break;
                 }
             }
             _ => {}
         }
-        result.push(ch);
+        end = index;
     }
-    Ok(Token::new(
-        row.clone(),
-        column.clone(),
-        Category::Character,
-        result,
-    ))
+    if status == 2 {
+        (
+            end,
+            Some(set_ok(row.clone(), column.clone(), value.clone())),
+        )
+    } else {
+        (
+            end,
+            Some(set_err(row.clone(), column.clone(), value.clone())),
+        )
+    }
 }
 
-fn recognize_digit(row: &usize, column: &usize, bytes: &[u8]) {
-    let mut result = "".to_string();
-    let mut status = 0;
-    let mut ch = bytes[*column] as char;
-    result.push(ch);
-    if ch == '0' {
-    } else {
-    }
-    ()
-}
+// fn recognize_digit(row: &usize, column: &usize, bytes: &[u8]) {
+//     let mut result = "".to_string();
+//     let mut status = 0;
+//     let mut ch = bytes[*column] as char;
+//     result.push(ch);
+//     if ch == '0' {
+//     } else {
+//     }
+//     ()
+// }
