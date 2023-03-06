@@ -33,6 +33,24 @@ fn generate_tokens(source_code: &str) -> (Vec<Token>, Vec<Token>) {
             let ch = line.chars().nth(column).unwrap();
             if ch == '_' || ch.is_ascii_alphabetic() {
                 // TODO:识别标识符
+                let (end, token) = recognize_identifier(&row, &column, &line[column..]);
+                column += end + 1;
+
+                match token {
+                    Some(token) => match token {
+                        Ok(token) => {
+                            println!("{}", token.value);
+                            tokens.push(token);
+                        }
+                        Err(token) => {
+                            println!("err {}", token.value);
+                            logs.push(token);
+                        }
+                    },
+                    None => {
+                        println!("none!!!!");
+                    }
+                }
             } else if ch == '\'' {
                 // TODO:识别字符
                 let (end, token) = recognize_character(&row, &column, &line[column + 1..]);
@@ -65,28 +83,29 @@ fn generate_tokens(source_code: &str) -> (Vec<Token>, Vec<Token>) {
     (tokens, logs)
 }
 
+fn set_ok(row: usize, column: usize, value: String) -> Result<Token, Token> {
+    Ok(Token::new(
+        row.clone(),
+        column.clone(),
+        Category::Character,
+        value,
+    ))
+}
+
+fn set_err(row: usize, column: usize, value: String) -> Result<Token, Token> {
+    Err(Token::new(
+        row.clone(),
+        column.clone(),
+        Category::Character,
+        value,
+    ))
+}
+
 fn recognize_character(
     row: &usize,
     column: &usize,
     line: &str,
 ) -> (usize, Option<Result<Token, Token>>) {
-    fn set_ok(row: usize, column: usize, value: String) -> Result<Token, Token> {
-        Ok(Token::new(
-            row.clone(),
-            column.clone(),
-            Category::Character,
-            value,
-        ))
-    }
-
-    fn set_err(row: usize, column: usize, value: String) -> Result<Token, Token> {
-        Err(Token::new(
-            row.clone(),
-            column.clone(),
-            Category::Character,
-            value,
-        ))
-    }
     let mut end = 0;
     let mut status = 0;
     let mut value = String::from("\'");
@@ -135,6 +154,7 @@ fn recognize_character(
         }
         end = index;
     }
+
     if status == 2 {
         (
             end,
@@ -148,13 +168,108 @@ fn recognize_character(
     }
 }
 
-// fn recognize_digit(row: &usize, column: &usize, bytes: &[u8]) {
-//     let mut result = "".to_string();
+fn recognize_identifier(
+    row: &usize,
+    column: &usize,
+    line: &str,
+) -> (usize, Option<Result<Token, Token>>) {
+    let mut end = 0;
+    let mut status = 0;
+    let mut value = String::from("");
+
+    for (index, ch) in line.chars().enumerate() {
+        value.push(ch);
+        match status {
+            0 => {
+                if ch == '_' || ch.is_ascii_alphabetic() || ch.is_ascii_digit() {
+                    status = 1;
+                } else {
+                    // err
+                    break;
+                }
+            }
+            1 => {
+                if ch == '_' || ch.is_ascii_alphabetic() || ch.is_ascii_digit() {
+                    status = 1;
+                } else if is_space_or_operator(ch) {
+                    status = 2;
+                } else {
+                    // err
+                    break;
+                }
+            }
+            2 => {
+                break;
+            }
+            _ => {}
+        }
+        end = index;
+    }
+    if status == 2 || end >= line.len() {
+        (
+            end,
+            Some(set_ok(row.clone(), column.clone(), value.clone())),
+        )
+    } else {
+        (
+            end,
+            Some(set_err(row.clone(), column.clone(), value.clone())),
+        )
+    }
+}
+
+fn is_space_or_operator(ch: char) -> bool {
+    ch == ' '
+        || ch == '+'
+        || ch == '-'
+        || ch == '*'
+        || ch == '/'
+        || ch == '%'
+        || ch == '&'
+        || ch == '|'
+        || ch == '!'
+        || ch == '<'
+        || ch == '>'
+        || ch == '='
+        || ch == '?'
+}
+
+// fn recognize_digit(
+//     row: &usize,
+//     column: &usize,
+//     line: &str,
+// ) -> (usize, Option<Result<Token, Token>>) {
+//     let mut end = 0;
 //     let mut status = 0;
-//     let mut ch = bytes[*column] as char;
-//     result.push(ch);
-//     if ch == '0' {
-//     } else {
+//     let mut value = String::from("");
+//
+//     for (index, ch) in line.chars().enumerate() {
+//         // if index == 0 && ch == '0' {
+//         // } else {
+//         // }
+//         match status {
+//             0 => {
+//                 if ch == '0' {
+//                     status = 1;
+//                 } else {
+//                     status = 7;
+//                 }
+//             }
+//             1 => {
+//                 if ch == '0' {
+//                     status = 2;
+//                 } else if {
+//
+//                 }
+//             }
+//             2 => {}
+//             3 => {}
+//             4 => {}
+//             5 => {}
+//             6 => {}
+//             7 => {}
+//             8 => {}
+//             9 => {}
+//         }
 //     }
-//     ()
 // }
