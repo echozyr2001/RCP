@@ -9,8 +9,8 @@ pub fn build() -> impl Widget<AppState> {
     TextBox::multiline()
         .with_text_size(FONT_SIZE)
         .with_line_wrapping(false)
-        .lens(AppState::source_text)
-        .controller(MyController)
+        .lens(AppState::source_code)
+        // .controller(MyController)
 }
 
 struct MyController;
@@ -26,15 +26,15 @@ impl<W: Widget<AppState>> Controller<AppState, W> for MyController {
         match event {
             Event::KeyDown(key_event) => {
                 if key_event.code == Code::Enter || key_event.code == Code::Backspace {
-                    let line_number = data.source_text.split('\n').count();
-                    data.line_number = line_number;
+                    // let line_number = data.source_text.split('\n').count();
+                    // data.line_number = line_number;
                     child.event(ctx, event, data, env);
                 }
             }
             Event::KeyUp(key_event) => {
                 if key_event.code == Code::Enter || key_event.code == Code::Backspace {
-                    let line_number = data.source_text.split('\n').count();
-                    data.line_number = line_number;
+                    // let line_number = data.source_text.split('\n').count();
+                    // data.line_number = line_number;
                     child.event(ctx, event, data, env);
                 }
             }

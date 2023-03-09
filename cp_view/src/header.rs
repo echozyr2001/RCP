@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use cp_core::lexical_analyzer::Cursor;
 use druid::widget::{Button, Label};
 use druid::{
     widget::{Flex, Padding},
@@ -16,30 +17,26 @@ pub fn build() -> impl Widget<AppState> {
         Flex::row()
             .with_child(
                 Button::new("词法分析").on_click(|_, data: &mut AppState, _| {
-                    // let mut log_info = self::AppState::log_info;
-                    // let mut a = Vec::<String>::new();
-                    // a.push("s".to_string());
-
-                    // _data.log_info.lock().unwrap().push("aaa".to_string());
-
-                    // self::AppState::line_number
-
-                    Arc::make_mut(&mut data.log_info).push("sss".to_string());
+                    data.out_put = Arc::new(Vec::new());
+                    data.log_info = Arc::new(Vec::new());
+                    let mut cursor = Cursor::new(&data.source_code);
+                    while !cursor.is_eof() {
+                        match cursor.advance_token() {
+                            Ok(token) => {
+                                if token.not_whitespace() && token.not_comment() {
+                                    Arc::make_mut(&mut data.out_put).push(format!("{}", token))
+                                }
+                            }
+                            Err(token) => {
+                                Arc::make_mut(&mut data.log_info).push(format!("Err: {}", token))
+                            }
+                        }
+                    }
                 }),
             )
             .with_child(
-                Label::new(LocalizedString::new("Click here to visit Example.com")).on_click(
-                    |_, _, _| {
-                        open_browser(
-                            "https://echo-zyr-2001s-organization.gitbook.io/rust_complier/",
-                        )
-                        .unwrap();
-                    },
-                ),
-            )
-            .with_child(
                 Button::new("button2").on_click(|_, data: &mut AppState, _| {
-                    println!("line number is {}", cp_core::count_line(&data.source_text));
+                    println!("line number is ");
                 }),
             )
             .with_child(Button::new("button3"))

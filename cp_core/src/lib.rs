@@ -1,49 +1,84 @@
 pub mod lexical_analyzer;
 
 #[warn(dead_code)]
-#[derive(Debug, Clone, Copy)]
-enum Category {
-    KeyWords,
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum TokenKind {
+    Comment,
+    WhiteSpace,
     Delimiter,
-    Litter,
+    Identifier,
+    KeyWord(KeyWords),
+    Number(Numbers),
     Character,
+    String,
+    Operator(Operators),
+    Err,
+    TODO,
+    Unknown,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq)]
 enum KeyWords {
-    CHAR,
-    INT,
-    FLOAT,
-    BREAK,
-    CONST,
-    RETURN,
-    VOID,
-    CONTINUE,
-    DO,
-    WHILE,
-    IF,
-    ELSE,
-    FOR,
+    Char,
+    Int,
+    Float,
+    Break,
+    Const,
+    Return,
+    Void,
+    Continue,
+    Do,
+    While,
+    If,
+    Else,
+    For,
 }
 
-enum Delimiter {
-    LEFTCURLYBRACKET,
-    RIGHTCURLYBRACKET,
-    SEMICOLON,
-    COMMA,
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum Numbers {
+    Integer,
+    Exponent,
+    Float,
 }
 
-enum Litter {
-    INTEGER,
-    CHARACTER,
-    STRING,
-    INEDNTIFIER,
-    FLOAT,
-}
-
-// enum Operator {
-//
-// }
-
-pub fn count_line(text: &String) -> usize {
-    text.split('\n').count()
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum Operators {
+    Add,
+    AddEqual,
+    And,
+    AndEqual,
+    DoubleAdd,
+    DoubleGreater,
+    DoubleGreaterEqual,
+    DoubleLess,
+    DoubleLessEqual,
+    DoubleMinus,
+    Division,
+    DivisionEqual,
+    Equal,
+    Greater,
+    GreaterEqual,
+    Less,
+    LessEqual,
+    LogicAnd,
+    LogicEqual,
+    LogicNot,
+    LogicOr,
+    Minus,
+    MinusEqual,
+    Mul,
+    MulEqula,
+    Not,
+    NotEqual,
+    Or,
+    OrEqual,
+    Percent,
+    PercentEqual,
+    Question,
+    Xor,
+    XorEqual,
+    OpenParen,
+    CloseParen,
+    OpenBracket,
+    CloseBracket,
 }

@@ -1,31 +1,25 @@
 use std::sync::Arc;
 
-use druid::{
-    commands,
-    menu::{Menu, MenuItem},
-    widget::{Padding, Split},
-    AppDelegate, AppLauncher, Data, Env, FileDialogOptions, Lens, LocalizedString, SysMods, Widget,
-    WindowDesc, WindowId,
-};
+use druid::{commands, menu::{Menu, MenuItem}, widget::{Padding, Split}, AppDelegate, AppLauncher, Data, Env, FileDialogOptions, Lens, LocalizedString, SysMods, Widget, WindowDesc, WindowId, FileSpec};
 use opener::open_browser;
 
 const WINDOW_HEIGHT: f64 = 720.0;
 const WINDOW_WIDTH: f64 = 1280.0;
 const MIN_SIZE: f64 = 500.0;
-const FONT_SIZE: f64 = 30.0;
+const FONT_SIZE: f64 = 15.0;
 
 #[derive(Data, Lens, Clone)]
 pub struct AppState {
-    source_text: String,
-    line_number: usize,
+    source_code: String,
+    out_put: Arc<Vec<String>>,
     log_info: Arc<Vec<String>>,
 }
 
 impl AppState {
     fn new() -> Self {
         Self {
-            source_text: format!("this is source_text"),
-            line_number: 1,
+            source_code: format!(""),
+            out_put: Arc::new(Vec::new()),
             log_info: Arc::new(Vec::new()),
         }
     }
@@ -41,7 +35,7 @@ pub fn show() {
         .menu(menu_builder)
         .window_size((WINDOW_WIDTH, WINDOW_HEIGHT))
         .with_min_size((MIN_SIZE, MIN_SIZE))
-        .title(format!("My Complier"));
+        .title(format!("My Compiler"));
 
     AppLauncher::with_window(main_window)
         .delegate(MyDelegate)
@@ -57,6 +51,23 @@ fn ui_builder() -> impl Widget<AppState> {
 }
 
 fn menu_builder(_: Option<WindowId>, _: &AppState, _: &Env) -> Menu<AppState> {
+    let rs = FileSpec::new("Rust source", &["rs"]);
+    let txt = FileSpec::new("Text file", &["txt"]);
+    let default_save_name = String::from("MyFile.txt");
+    let open_dialog_options = FileDialogOptions::new()
+        .allowed_types(vec![rs, txt])
+        .default_name("MySavedFile.txt")
+        .name_label("Source")
+        .title("Where did you put that file?")
+        .button_text("Import");
+    let save_dialog_options = FileDialogOptions::new()
+        .allowed_types(vec![rs, txt])
+        .default_type(txt)
+        .default_name(default_save_name)
+        .name_label("Target")
+        .title("Choose a target for this lovely file")
+        .button_text("Export");
+
     let base = Menu::empty();
     base.entry(
         Menu::new(LocalizedString::new("macos-menu-application-menu"))
@@ -102,28 +113,29 @@ fn menu_builder(_: Option<WindowId>, _: &AppState, _: &Env) -> Menu<AppState> {
                     .hotkey(SysMods::Cmd, "q"),
             ),
     )
-    .entry(
-        Menu::new("File")
-            .entry(MenuItem::new("Open file").on_activate(|ctx, _, _| {
-                ctx.submit_command(commands::SHOW_OPEN_PANEL.with(FileDialogOptions::new()))
-            }))
-            .entry(MenuItem::new("Save as").on_activate(|ctx, _, _| {
-                ctx.submit_command(commands::SHOW_SAVE_PANEL.with(FileDialogOptions::new()))
+        .entry(
+            Menu::new("File")
+                .entry(MenuItem::new("Open file").on_activate(move |ctx, _, _| {
+                    ctx.submit_command(commands::SHOW_OPEN_PANEL.with(open_dialog_options.clone()))
+                }))
+                .entry(MenuItem::new("Save as").on_activate(move |ctx, _, _| {
+                    ctx.submit_command(commands::SHOW_SAVE_PANEL.with(save_dialog_options.clone()))
+                })),
+        )
+        .entry(
+            Menu::new("menu2")
+                .entry(MenuItem::new("bbb"))
+                .entry(MenuItem::new("ccc")),
+        )
+        .entry(
+            Menu::new("help").entry(MenuItem::new("Open help doc").on_activate(|_, _, _| {
+                open_browser("https://echo-zyr-2001s-organization.gitbook.io/rust_complier/").unwrap()
             })),
-    )
-    .entry(
-        Menu::new("menu2")
-            .entry(MenuItem::new("bbb"))
-            .entry(MenuItem::new("ccc")),
-    )
-    .entry(
-        Menu::new("help").entry(MenuItem::new("Open help doc").on_activate(|_, _, _| {
-            open_browser("https://echo-zyr-2001s-organization.gitbook.io/rust_complier/").unwrap()
-        })),
-    )
+        )
 }
 
 struct MyDelegate;
+
 impl AppDelegate<AppState> for MyDelegate {
     fn command(
         &mut self,
@@ -136,7 +148,7 @@ impl AppDelegate<AppState> for MyDelegate {
         if let Some(file_info) = cmd.get(commands::OPEN_FILE) {
             match std::fs::read_to_string(file_info.path()) {
                 Ok(s) => {
-                    data.source_text = s;
+                    data.source_code = s;
                 }
                 Err(e) => {
                     println!("Error opening file: {e}");
@@ -145,12 +157,11 @@ impl AppDelegate<AppState> for MyDelegate {
             return druid::Handled::Yes;
         }
         if let Some(file_info) = cmd.get(commands::SAVE_FILE_AS) {
-            if let Err(e) = std::fs::write(file_info.path(), &data.source_text) {
+            if let Err(e) = std::fs::write(file_info.path(), &data.source_code) {
                 println!("Error saving file: {e}");
             }
             return druid::Handled::Yes;
         }
-
         druid::Handled::No
     }
 }

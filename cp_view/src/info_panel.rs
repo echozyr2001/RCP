@@ -6,8 +6,7 @@ use druid::{
 use crate::{AppState, FONT_SIZE};
 
 pub fn build() -> impl Widget<AppState> {
-    let output = Label::new(|data: &AppState, _: &Env| format!("Line {}", data.line_number))
-        .with_text_size(FONT_SIZE);
+    let output = Scroll::new(List::new(make_list).lens(AppState::out_put));
 
     let log = Scroll::new(List::new(make_list).lens(AppState::log_info));
     Split::rows(output, log)
