@@ -1,4 +1,3 @@
-use cp_core::{lexical_analyzer::Cursor, *};
 use cp_view::*;
 
 fn main() {

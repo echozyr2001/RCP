@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use cp_core::lexical_analyzer::Cursor;
+use cp_core::lexer;
 use druid::widget::{Button, Label};
 use druid::{
     widget::{Flex, Padding},
@@ -19,7 +19,8 @@ pub fn build() -> impl Widget<AppState> {
                 Button::new("词法分析").on_click(|_, data: &mut AppState, _| {
                     data.out_put = Arc::new(Vec::new());
                     data.log_info = Arc::new(Vec::new());
-                    let mut cursor = Cursor::new(&data.source_code);
+
+                    let mut cursor = lexer::Cursor::new(&data.source_code);
                     while !cursor.is_eof() {
                         match cursor.advance_token() {
                             Ok(token) => {

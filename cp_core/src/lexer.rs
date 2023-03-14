@@ -1,43 +1,8 @@
-use std::{fmt::Display, str::Chars};
-use crate::{KeyWords, Numbers, Operators, TokenKind};
-use crate::Numbers::Integer;
-
-#[derive(Debug)]
-pub struct Token {
-    row: usize,
-    column: usize,
-    token_kind: TokenKind,
-    value: String,
-}
-
-impl Token {
-    fn new(row: usize, column: usize, token_kind: TokenKind, value: String) -> Self {
-        Self {
-            row,
-            column,
-            token_kind,
-            value,
-        }
-    }
-
-    pub fn not_whitespace(&self) -> bool {
-        self.token_kind != TokenKind::WhiteSpace
-    }
-
-    pub fn not_comment(&self) -> bool {
-        self.token_kind != TokenKind::Comment
-    }
-}
-
-impl Display for Token {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "row: {},\t\tcolumn: {},\t\tvalue: {},\t\t\ttoken_kind: {:?}",
-            self.row, self.column, self.value, self.token_kind,
-        )
-    }
-}
+use crate::token::Numbers::*;
+use crate::token::{KeyWords, Numbers, Operators, Token, TokenKind};
+use std::str::Chars;
+type LexerResult = Result<Token, Token>;
+const EOF_CHAR: char = '\0';
 
 pub struct Cursor<'a> {
     chars: Chars<'a>,
@@ -46,16 +11,12 @@ pub struct Cursor<'a> {
     column: usize,
 }
 
-const EOF_CHAR: char = '\0';
-
-type LexerResult = Result<Token, Token>;
-
-#[derive(Debug)]
-enum LexerError {
-    Success,
-    UnexpectEnd,
-    UnexpectedChar,
-}
+// #[derive(Debug)]
+// enum LexerError {
+//     Success,
+//     UnexpectEnd,
+//     UnexpectedChar,
+// }
 
 impl<'a> Cursor<'a> {
     pub fn new(input: &'a str) -> Cursor<'a> {
@@ -104,7 +65,22 @@ fn is_whitespace(ch: char) -> bool {
 fn is_operator(ch: char) -> bool {
     matches!(
         ch,
-        '+' | '-' | '*' | '/' | '&' | '|' | '!' | '^' | '?' | ':' | '>' | '<' | '=' | '(' | ')' | '['|']'
+        '+' | '-'
+            | '*'
+            | '/'
+            | '&'
+            | '|'
+            | '!'
+            | '^'
+            | '?'
+            | ':'
+            | '>'
+            | '<'
+            | '='
+            | '('
+            | ')'
+            | '['
+            | ']'
     )
 }
 
@@ -128,9 +104,9 @@ fn is_whitespace_or_operator_or_delimiter(ch: char) -> bool {
     is_whitespace(ch) || is_operator(ch) || is_delimiter(ch)
 }
 
-fn is_whitespace_or_delimiter(ch: char) -> bool {
-    is_whitespace(ch) || is_delimiter(ch)
-}
+// fn is_whitespace_or_delimiter(ch: char) -> bool {
+//     is_whitespace(ch) || is_delimiter(ch)
+// }
 
 fn is_keyword(buf: &str) -> Option<TokenKind> {
     match buf {
@@ -340,7 +316,7 @@ impl Cursor<'_> {
         // 判断是否为关键字
         match is_keyword(buf.as_str()) {
             Some(kind) => Ok(Token::new(row, column, kind, buf)),
-            None => Ok(Token::new(row, column, TokenKind::Identifier, buf))
+            None => Ok(Token::new(row, column, TokenKind::Identifier, buf)),
         }
     }
 
@@ -898,8 +874,8 @@ impl Cursor<'_> {
                         status = 19;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 20;
                     }
                 },
@@ -915,8 +891,8 @@ impl Cursor<'_> {
                         status = 22;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 23;
                     }
                 },
@@ -927,8 +903,8 @@ impl Cursor<'_> {
                         status = 24;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 25;
                     }
                 },
@@ -939,8 +915,8 @@ impl Cursor<'_> {
                         status = 26;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 27
                     }
                 },
@@ -951,8 +927,8 @@ impl Cursor<'_> {
                         status = 28;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 29;
                     }
                 },
@@ -968,8 +944,8 @@ impl Cursor<'_> {
                         status = 31;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 32;
                     }
                 },
@@ -985,8 +961,8 @@ impl Cursor<'_> {
                         status = 34;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 35;
                     }
                 },
@@ -1002,8 +978,8 @@ impl Cursor<'_> {
                         status = 37;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 38;
                     }
                 },
@@ -1019,8 +995,8 @@ impl Cursor<'_> {
                         status = 40;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 41;
                     }
                 },
@@ -1031,8 +1007,8 @@ impl Cursor<'_> {
                         status = 42;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 43;
                     }
                 },
@@ -1043,12 +1019,19 @@ impl Cursor<'_> {
                         status = 44;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 45;
                     }
+                },
+                12 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Question),
+                        buf,
+                    ))
                 }
-                12 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Question), buf)),
                 13 => match self.first() {
                     '=' => {
                         let ch = self.next().unwrap();
@@ -1061,22 +1044,134 @@ impl Cursor<'_> {
                         status = 47;
                     }
                 },
-                14 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::OpenParen), buf)),
-                15 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::CloseParen), buf)),
-                16 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::OpenBracket), buf)),
-                17 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::CloseBracket), buf)),
-                18 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::DoubleAdd), buf)),
-                19 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::AddEqual), buf)),
-                20 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Add), buf)),
-                21 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::DoubleMinus), buf)),
-                22 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::MinusEqual), buf)),
-                23 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Minus), buf)),
-                24 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::MulEqula), buf)),
-                25 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Mul), buf)),
-                26 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::DivisionEqual), buf)),
-                27 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Division), buf)),
-                28 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::PercentEqual), buf)),
-                29 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Percent), buf)),
+                14 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::OpenParen),
+                        buf,
+                    ))
+                }
+                15 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::CloseParen),
+                        buf,
+                    ))
+                }
+                16 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::OpenBracket),
+                        buf,
+                    ))
+                }
+                17 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::CloseBracket),
+                        buf,
+                    ))
+                }
+                18 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::DoubleAdd),
+                        buf,
+                    ))
+                }
+                19 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::AddEqual),
+                        buf,
+                    ))
+                }
+                20 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Add),
+                        buf,
+                    ))
+                }
+                21 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::DoubleMinus),
+                        buf,
+                    ))
+                }
+                22 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::MinusEqual),
+                        buf,
+                    ))
+                }
+                23 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Minus),
+                        buf,
+                    ))
+                }
+                24 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::MulEqula),
+                        buf,
+                    ))
+                }
+                25 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Mul),
+                        buf,
+                    ))
+                }
+                26 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::DivisionEqual),
+                        buf,
+                    ))
+                }
+                27 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Division),
+                        buf,
+                    ))
+                }
+                28 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::PercentEqual),
+                        buf,
+                    ))
+                }
+                29 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Percent),
+                        buf,
+                    ))
+                }
                 30 => match self.first() {
                     '=' => {
                         let ch = self.next().unwrap();
@@ -1084,13 +1179,27 @@ impl Cursor<'_> {
                         status = 48;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 49;
                     }
                 },
-                31 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::GreaterEqual), buf)),
-                32 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Greater), buf)),
+                31 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::GreaterEqual),
+                        buf,
+                    ))
+                }
+                32 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Greater),
+                        buf,
+                    ))
+                }
                 33 => match self.first() {
                     '=' => {
                         let ch = self.next().unwrap();
@@ -1098,29 +1207,155 @@ impl Cursor<'_> {
                         status = 50;
                     }
                     _ => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
+                        // let ch = self.next().unwrap();
+                        // buf.push(ch);
                         status = 51;
                     }
                 },
-                34 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::LessEqual), buf)),
-                35 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Less), buf)),
-                36 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::LogicAnd), buf)),
-                37 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::AndEqual), buf)),
-                38 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::And), buf)),
-                39 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::LogicOr), buf)),
-                40 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::OrEqual), buf)),
-                41 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Or), buf)),
-                42 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::NotEqual), buf)),
-                43 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Not), buf)),
-                44 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::XorEqual), buf)),
-                45 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Xor), buf)),
-                46 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::LogicEqual), buf)),
-                47 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::Equal), buf)),
-                48 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::DoubleGreaterEqual), buf)),
-                49 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::DoubleGreater), buf)),
-                50 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::DoubleLessEqual), buf)),
-                51 => return Ok(Token::new(row, column, TokenKind::Operator(Operators::DoubleLess), buf)),
+                34 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::LessEqual),
+                        buf,
+                    ))
+                }
+                35 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Less),
+                        buf,
+                    ))
+                }
+                36 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::LogicAnd),
+                        buf,
+                    ))
+                }
+                37 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::AndEqual),
+                        buf,
+                    ))
+                }
+                38 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::And),
+                        buf,
+                    ))
+                }
+                39 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::LogicOr),
+                        buf,
+                    ))
+                }
+                40 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::OrEqual),
+                        buf,
+                    ))
+                }
+                41 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Or),
+                        buf,
+                    ))
+                }
+                42 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::NotEqual),
+                        buf,
+                    ))
+                }
+                43 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Not),
+                        buf,
+                    ))
+                }
+                44 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::XorEqual),
+                        buf,
+                    ))
+                }
+                45 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Xor),
+                        buf,
+                    ))
+                }
+                46 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::LogicEqual),
+                        buf,
+                    ))
+                }
+                47 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::Equal),
+                        buf,
+                    ))
+                }
+                48 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::DoubleGreaterEqual),
+                        buf,
+                    ))
+                }
+                49 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::DoubleGreater),
+                        buf,
+                    ))
+                }
+                50 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::DoubleLessEqual),
+                        buf,
+                    ))
+                }
+                51 => {
+                    return Ok(Token::new(
+                        row,
+                        column,
+                        TokenKind::Operator(Operators::DoubleLess),
+                        buf,
+                    ))
+                }
                 _ => {}
             }
         }
