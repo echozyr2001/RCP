@@ -1,6 +1,6 @@
 use druid::{
     widget::{Label, List, Scroll, Split},
-    Env, Widget, WidgetExt,
+    Widget, WidgetExt,
 };
 
 use crate::{AppState, FONT_SIZE};

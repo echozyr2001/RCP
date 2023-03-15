@@ -10,7 +10,7 @@ pub fn build() -> impl Widget<AppState> {
         .with_text_size(FONT_SIZE)
         .with_line_wrapping(false)
         .lens(AppState::source_code)
-        // .controller(MyController)
+    // .controller(MyController)
 }
 
 struct MyController;

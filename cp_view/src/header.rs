@@ -1,13 +1,11 @@
 use std::sync::Arc;
 
 use cp_core::lexer;
-use druid::widget::{Button, Label};
+use druid::widget::Button;
 use druid::{
     widget::{Flex, Padding},
     Widget,
 };
-use druid::{LocalizedString, WidgetExt};
-use opener::open_browser;
 
 use crate::AppState;
 
@@ -36,7 +34,7 @@ pub fn build() -> impl Widget<AppState> {
                 }),
             )
             .with_child(
-                Button::new("button2").on_click(|_, data: &mut AppState, _| {
+                Button::new("button2").on_click(|_, _data: &mut AppState, _| {
                     println!("line number is ");
                 }),
             )

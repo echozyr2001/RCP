@@ -1408,6 +1408,6 @@ impl Cursor<'_> {
                 _ => break,
             }
         }
-        Ok(Token::new(row, column, TokenKind::Unknown, buf))
+        Err(Token::new(row, column, TokenKind::Unknown, buf))
     }
 }
