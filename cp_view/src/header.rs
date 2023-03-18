@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use cp_core::lexer;
+use cp_core::relexer;
 use druid::widget::Button;
 use druid::{
     widget::{Flex, Padding},
@@ -34,8 +35,18 @@ pub fn build() -> impl Widget<AppState> {
                 }),
             )
             .with_child(
-                Button::new("button2").on_click(|_, _data: &mut AppState, _| {
-                    println!("line number is ");
+                Button::new("Re词法分析").on_click(|_, data: &mut AppState, _| {
+                    data.out_put = Arc::new(Vec::new());
+                    data.log_info = Arc::new(Vec::new());
+
+                    let mut re_lexer = relexer::ReLexer::new(&data.source_code);
+                    re_lexer.generate_token();
+                    for token in re_lexer.tokens {
+                        Arc::make_mut(&mut data.out_put).push(format!("{}", token))
+                    }
+                    for error in re_lexer.errors {
+                        Arc::make_mut(&mut data.log_info).push(format!("Err: {}", error))
+                    }
                 }),
             )
             .with_child(Button::new("button3"))
