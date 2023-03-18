@@ -25,7 +25,7 @@ impl Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{}:{}, value: {}, token_kind: {:?}",
+            "row: {}, \t column: {}, \t value: {}, \t token_kind: {:?}",
             self.row, self.column, self.value, self.token_kind
         )
     }
@@ -53,12 +53,13 @@ impl<'a> ReLexer<'a> {
         while let Some(token) = lex.next() {
             match token {
                 TokenKind::Comment => {
-                    self.tokens.push(Token::new(
-                        row.clone(),
-                        column.clone(),
-                        TokenKind::Comment,
-                        lex.slice().to_string(),
-                    ));
+                    // NOTE:忽略注释
+                    // self.tokens.push(Token::new(
+                    //     row.clone(),
+                    //     column.clone(),
+                    //     TokenKind::Comment,
+                    //     lex.slice().to_string(),
+                    // ));
                     column += lex.span().end - lex.span().start;
                 }
                 TokenKind::Delimiter => {
@@ -70,11 +71,74 @@ impl<'a> ReLexer<'a> {
                     ));
                     column += lex.span().end - lex.span().start;
                 }
-                TokenKind::Integer => {
+                TokenKind::IntegerNumber => {
                     self.tokens.push(Token::new(
                         row.clone(),
                         column.clone(),
-                        TokenKind::Integer,
+                        TokenKind::IntegerNumber,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::FloatNumber => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::FloatNumber,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::ExponentNumber => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::ExponentNumber,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::HexNumber => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::HexNumber,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::OctNumber => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::OctNumber,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::Identifier => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::Identifier,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::Char => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::Char,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::Int => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::Int,
                         lex.slice().to_string(),
                     ));
                     column += lex.span().end - lex.span().start;
@@ -88,20 +152,83 @@ impl<'a> ReLexer<'a> {
                     ));
                     column += lex.span().end - lex.span().start;
                 }
-                TokenKind::Exponent => {
+                TokenKind::Break => {
                     self.tokens.push(Token::new(
                         row.clone(),
                         column.clone(),
-                        TokenKind::Exponent,
+                        TokenKind::Float,
                         lex.slice().to_string(),
                     ));
                     column += lex.span().end - lex.span().start;
                 }
-                TokenKind::Identifier => {
+                TokenKind::Const => {
                     self.tokens.push(Token::new(
                         row.clone(),
                         column.clone(),
-                        TokenKind::Identifier,
+                        TokenKind::Const,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::Return => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::Return,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::Void => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::Void,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::Continue => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::Continue,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::While => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::While,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::If => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::If,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::Else => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::Else,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::For => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::For,
                         lex.slice().to_string(),
                     ));
                     column += lex.span().end - lex.span().start;
@@ -250,6 +377,51 @@ impl<'a> ReLexer<'a> {
                     ));
                     column += lex.span().end - lex.span().start;
                 }
+                TokenKind::OpenParen => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::OpenParen,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::CloseParen => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::CloseParen,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::OpenBracket => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::OpenBracket,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::CloseBracket => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::CloseBracket,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
+                TokenKind::Equal => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::Equal,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
                 TokenKind::Error => {
                     self.errors.push(Token::new(
                         row.clone(),
@@ -285,20 +457,77 @@ enum TokenKind {
     #[regex(r#"[_a-zA-Z][_a-zA-Z0-9]*"#)]
     Identifier,
 
-    #[regex(r#"0|[1-9]\d*"#)]
-    Integer,
+    #[regex(r#"char"#)]
+    Char,
 
-    #[regex(r#"[1-9]\d*\.\d*|0\.\d*[1-9]\d*"#)]
+    #[regex(r#"int"#)]
+    Int,
+
+    #[regex(r#"float"#)]
     Float,
 
-    #[regex(r#"[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)"#)]
-    Exponent,
+    #[regex(r#"break"#)]
+    Break,
 
-    #[regex(r#"'[^']+'"#)]
+    #[regex(r#"const"#)]
+    Const,
+
+    #[regex(r#"return"#)]
+    Return,
+
+    #[regex(r#"void"#)]
+    Void,
+
+    #[regex(r#"continue"#)]
+    Continue,
+
+    #[regex(r#"while"#)]
+    While,
+
+    #[regex(r#"if"#)]
+    If,
+
+    #[regex(r#"else"#)]
+    Else,
+
+    #[regex(r#"for"#)]
+    For,
+
+    #[regex(r#"(0[xX])[0-9a-fA-F]+"#)]
+    HexNumber,
+
+    #[regex(r#"0[0-7]+"#)]
+    OctNumber,
+
+    #[regex(r#"0|[1-9]\d*"#)]
+    IntegerNumber,
+
+    #[regex(r#"[1-9]\d*\.\d*|0\.\d*[1-9]\d*"#)]
+    FloatNumber,
+
+    #[regex(r#"[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)"#)]
+    ExponentNumber,
+
+    #[regex(r#"'[^']'"#)]
     Character,
 
-    #[regex(r#""[^"]*""#)]
+    #[regex(r#""[^("|;)]*""#)]
     String,
+
+    #[regex(r#"\("#)]
+    OpenParen,
+
+    #[regex(r#"\)"#)]
+    CloseParen,
+
+    #[regex(r#"\["#)]
+    OpenBracket,
+
+    #[regex(r#"\]"#)]
+    CloseBracket,
+
+    #[regex(r#"="#)]
+    Equal,
 
     #[regex(r#"\+"#)]
     Add,

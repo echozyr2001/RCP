@@ -31,7 +31,7 @@ impl Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{}:{}, \t\tvalue: {}, \t\token_kind: {:?}",
+            "row: {}, \t column: {}, \t value: {}, \t token_kind: {:?}",
             self.row, self.column, self.value, self.token_kind,
         )
     }
