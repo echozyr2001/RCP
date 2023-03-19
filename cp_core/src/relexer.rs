@@ -80,6 +80,15 @@ impl<'a> ReLexer<'a> {
                     ));
                     column += lex.span().end - lex.span().start;
                 }
+                TokenKind::Zero => {
+                    self.tokens.push(Token::new(
+                        row.clone(),
+                        column.clone(),
+                        TokenKind::IntegerNumber,
+                        lex.slice().to_string(),
+                    ));
+                    column += lex.span().end - lex.span().start;
+                }
                 TokenKind::FloatNumber => {
                     self.tokens.push(Token::new(
                         row.clone(),
@@ -501,6 +510,9 @@ enum TokenKind {
 
     #[regex(r#"[1-9][0-9]*"#)]
     IntegerNumber,
+
+    #[regex(r#"0"#)]
+    Zero,
 
     #[regex(r#"[1-9]\d*\.\d*|0\.\d*[1-9]\d*"#)]
     FloatNumber,
