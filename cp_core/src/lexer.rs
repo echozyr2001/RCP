@@ -81,6 +81,7 @@ fn is_operator(ch: char) -> bool {
             | ')'
             | '['
             | ']'
+            | '%'
     )
 }
 
@@ -369,11 +370,11 @@ impl Cursor<'_> {
                     }
                 },
                 2 => match self.first() {
-                    '0' => {
-                        let ch = self.next().unwrap();
-                        buf.push(ch);
-                        status = 2;
-                    }
+                    // '0' => {
+                    //     let ch = self.next().unwrap();
+                    //     buf.push(ch);
+                    //     status = 2;
+                    // }
                     '1'..='7' => {
                         let ch = self.next().unwrap();
                         buf.push(ch);

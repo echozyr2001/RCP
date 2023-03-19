@@ -25,7 +25,7 @@ impl Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "row: {}, \t column: {}, \t value: {}, \t token_kind: {:?}",
+            "{}@{}@{}@{:?}",
             self.row, self.column, self.value, self.token_kind
         )
     }
@@ -493,13 +493,13 @@ enum TokenKind {
     #[regex(r#"for"#)]
     For,
 
-    #[regex(r#"(0[xX])[0-9a-fA-F]+"#)]
+    #[regex(r#"0[xX][0-9a-fA-F]+"#)]
     HexNumber,
 
-    #[regex(r#"0[0-7]+"#)]
+    #[regex("0[1-7]+")]
     OctNumber,
 
-    #[regex(r#"0|[1-9]\d*"#)]
+    #[regex(r#"[1-9][0-9]*"#)]
     IntegerNumber,
 
     #[regex(r#"[1-9]\d*\.\d*|0\.\d*[1-9]\d*"#)]
