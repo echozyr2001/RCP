@@ -16,8 +16,8 @@ pub fn build() -> impl Widget<AppState> {
                 1.0,
             ),
     )
-    .horizontal()
-    .padding(10.0);
+        .horizontal()
+        .padding(10.0);
     let info = Scroll::new(
         Flex::column()
             .cross_axis_alignment(CrossAxisAlignment::Start)
@@ -28,8 +28,8 @@ pub fn build() -> impl Widget<AppState> {
                 1.0,
             ),
     )
-    .horizontal()
-    .padding(10.0);
+        .horizontal()
+        .padding(10.0);
 
     Split::rows(output, info)
 }
@@ -39,25 +39,25 @@ fn make_header() -> impl Widget<AppState> {
         .with_child(
             Label::new("Row")
                 .with_text_size(FONT_SIZE)
-                .fix_width(WINDOW_WIDTH / 10.0),
+                .fix_width(WINDOW_WIDTH / 20.0),
         )
         .with_default_spacer()
         .with_child(
             Label::new("Column")
                 .with_text_size(FONT_SIZE)
-                .fix_width(WINDOW_WIDTH / 10.0),
+                .fix_width(WINDOW_WIDTH / 20.0),
         )
         .with_default_spacer()
         .with_child(
             Label::new("Value")
                 .with_text_size(FONT_SIZE)
-                .fix_width(WINDOW_WIDTH / 10.0),
+                .fix_width(WINDOW_WIDTH / 7.0),
         )
         .with_default_spacer()
         .with_child(
             Label::new("TokenKind")
                 .with_text_size(FONT_SIZE)
-                .fix_width(WINDOW_WIDTH / 7.0),
+                .fix_width(WINDOW_WIDTH / 5.0),
         )
 }
 
@@ -65,29 +65,33 @@ fn make_list_item() -> impl Widget<String> {
     Flex::row()
         .with_child(
             Label::new(|a: &String, _env: &_| {
-                format!("{}", a.split("@").enumerate().nth(0).unwrap().1)
+                format!("{}", a.split("@#").enumerate().nth(0).unwrap().1)
             })
-            .fix_width(WINDOW_WIDTH / 10.0),
+                .with_text_size(FONT_SIZE)
+                .fix_width(WINDOW_WIDTH / 20.0),
         )
         .with_default_spacer()
         .with_child(
             Label::new(|a: &String, _env: &_| {
-                format!("{}", a.split("@").enumerate().nth(1).unwrap().1)
+                format!("{}", a.split("@#").enumerate().nth(1).unwrap().1)
             })
-            .fix_width(WINDOW_WIDTH / 10.0),
+                .with_text_size(FONT_SIZE)
+                .fix_width(WINDOW_WIDTH / 20.0),
         )
         .with_default_spacer()
         .with_child(
             Label::new(|a: &String, _env: &_| {
-                format!("{}", a.split("@").enumerate().nth(2).unwrap().1)
+                format!("{}", a.split("@#").enumerate().nth(2).unwrap().1)
             })
-            .fix_width(WINDOW_WIDTH / 10.0),
+                .with_text_size(FONT_SIZE)
+                .fix_width(WINDOW_WIDTH / 7.0),
         )
         .with_default_spacer()
         .with_child(
             Label::new(|a: &String, _env: &_| {
-                format!("{}", a.split("@").enumerate().nth(3).unwrap().1)
+                format!("{}", a.split("@#").enumerate().nth(3).unwrap().1)
             })
-            .fix_width(WINDOW_WIDTH / 7.0),
+                .with_text_size(FONT_SIZE)
+                .fix_width(WINDOW_WIDTH / 5.0),
         )
 }

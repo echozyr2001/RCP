@@ -28,7 +28,7 @@ pub fn build() -> impl Widget<AppState> {
                                 }
                             }
                             Err(token) => {
-                                Arc::make_mut(&mut data.log_info).push(format!("Err: {}", token))
+                                Arc::make_mut(&mut data.log_info).push(format!("{}", token))
                             }
                         }
                     }
@@ -45,7 +45,7 @@ pub fn build() -> impl Widget<AppState> {
                         Arc::make_mut(&mut data.out_put).push(format!("{}", token))
                     }
                     for error in re_lexer.errors {
-                        Arc::make_mut(&mut data.log_info).push(format!("Err: {}", error))
+                        Arc::make_mut(&mut data.log_info).push(format!("{}", error))
                     }
                 }),
             )

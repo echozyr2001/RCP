@@ -6,7 +6,7 @@ use opener::open_browser;
 const WINDOW_HEIGHT: f64 = 720.0;
 const WINDOW_WIDTH: f64 = 1280.0;
 const MIN_SIZE: f64 = 500.0;
-const FONT_SIZE: f64 = 15.0;
+const FONT_SIZE: f64 = 17.0;
 
 #[derive(Data, Lens, Clone)]
 pub struct AppState {
